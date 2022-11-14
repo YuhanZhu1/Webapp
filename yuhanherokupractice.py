@@ -23,16 +23,11 @@ nq_df = nq.history(period='max')
 
 
 st.title("""
-This is a prictice of using github, streamlit, and heroku togrther
+This is a prictice of using github, streamlit, and heroku togrther""")
 
-**Check the sidebar for more detail**
-""")
-
-
-first = st.sidebar.button("CPI Data")
-if first:
-    st.write("**CPI Raw Data From FRED API**")
-    cpi_chart = alt.Chart(cpi_df).mark_line().encode(
+    
+st.write("**CPI Raw Data From FRED API**")
+cpi_chart = alt.Chart(cpi_df).mark_line().encode(
     x='Date',
     y='Index',
     color=alt.value("#FFAA00"),
@@ -41,18 +36,13 @@ if first:
     width=600,
     height=300)
 
-    st.write(cpi_chart)
+st.write(cpi_chart)
     
 
-second = st.sidebar.button("Nasdaq Composite Index Data")
 
-if second:
-    st.markdown("""#### Nasdaq Composite""")
-    st.line_chart(nq_df['Close'])
+st.markdown("""#### Nasdaq Composite""")
+st.line_chart(nq_df['Close'])
 
 
-third = st.sidebar.button("SP500 Index")
-
-if third:
-    st.markdown("""#### SP500 Index""")
-    st.line_chart(sp_df['Close'])
+st.markdown("""#### SP500 Index""")
+st.line_chart(sp_df['Close'])
