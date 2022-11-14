@@ -22,7 +22,7 @@ nq = yf.Ticker('^IXIC')
 nq_df = nq.history(period='max')
 
 
-st.title("""
+st.markdown("""
 This is a prictice of using github, streamlit, and heroku togrther""")
 
     
@@ -32,13 +32,34 @@ cpi_chart = alt.Chart(cpi_df).mark_line().encode(
     y='Index',
     color=alt.value("#FFAA00"),
     tooltip=['Index','Date']
-    ).interactive().properties(
+).interactive().properties(
     width=600,
     height=300)
 
 st.write(cpi_chart)
-    
 
+
+st.write("Histgram Showing Monthly CPI Changes")
+hist = alt.Chart(cpi_month).mark_bar().encode(
+    x='Index',
+    y='count()',
+    color=alt.value("#FFAA00")
+    ).properties(
+    width=600,
+    height=300)
+st.write(hist)
+
+st.markdown(""" 
+***
+#### Let's have a look of the CPI Yearly Change using `describe()` 
+""")
+cpiYear = cpi_month.groupby(cpi_month['Date'].dt.year).sum()
+cpiDescribe = cpiYear.describe().T
+st.write(cpiDescribe)
+
+st.write("and the monthly change")
+cpiMonthDescribe = cpi_month.describe().T
+st.write(cpiMonthDescribe)
 
 st.markdown("""#### Nasdaq Composite""")
 st.line_chart(nq_df['Close'])
