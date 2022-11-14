@@ -1,43 +1,58 @@
 #This is a prictive for using streamlit, Heroku, and github
 import streamlit as st
-import altair as alt
-from vega_datasets import data
-
-import numpy as np
 import pandas as pd
-import seaborn as sns
+from pandas import Series
+from fredapi import Fred
+import yfinance as yf
+import altair as alt
+from PIL import Image 
 
-unemp = data.unemployment_across_industries()
 
-unemp["yyyy/mm"] = unemp["year"].astype(str) + '.' + unemp["month"].astype(str)
-unemp['yyyy/mm'] = unemp['yyyy/mm'].astype('float')
+fred_key = '5b4374b4423e4bc6a2bccd68c4684772'
+fred = Fred(api_key=fred_key)
+cpi = fred.get_series(series_id='CPIAUCSL')
+cpi_df = pd.DataFrame({'Date':cpi.index,'Index':cpi.values}) 
+
+#load sp500 data
+sp = yf.Ticker('^GSPC')
+sp_df = sp.history(period='max')
+
+#load nasdaq data
+nq = yf.Ticker('^IXIC')
+nq_df = nq.history(period='max')
+
 
 st.title("""
 This is a prictice of using github, streamlit, and heroku togrther
 
 **Check the sidebar for more detail**
 """)
-print(unemp.head())
 
-first = st.sidebar.button("Count VS Rate")
+
+first = st.sidebar.button("CPI Data")
 if first:
-    st.write("Count and Rate: with tooltip")
-    fig1 = alt.Chart(unemp).mark_point().encode(
-    x ='count',
-    y ='rate',
-    color ='series',
+    st.write("**CPI Raw Data From FRED API**")
+    cpi_chart = alt.Chart(cpi_df).mark_line().encode(
+    x='Date',
+    y='Index',
+    color=alt.value("#FFAA00"),
+    tooltip=['Index','Date']
+    ).interactive().properties(
+    width=600,
+    height=300)
+
+    st.write(cpi_chart)
     
-    tooltip=['series', 'rate', 'count', 'date']).interactive()
 
-    fig1
-
-second = st.sidebar.button("Histgram")
+second = st.sidebar.button("Nasdaq Composite Index Data")
 
 if second:
-    st.write("Date and mean count")
-    fig2 = alt.Chart(unemp).mark_bar().encode(
-    x ='yyyy/mm',
-    y ='mean(count)',
-    color ='series').interactive()
+    st.markdown("""#### Nasdaq Composite""")
+    st.line_chart(nq_df['Close'])
 
-    fig2
+
+third = st.sidebar.button("SP500 Index")
+
+if third:
+    st.markdown("""#### SP500 Index""")
+    st.line_chart(sp_df['Close'])
