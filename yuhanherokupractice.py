@@ -13,6 +13,15 @@ fred = Fred(api_key=fred_key)
 cpi = fred.get_series(series_id='CPIAUCSL')
 cpi_df = pd.DataFrame({'Date':cpi.index,'Index':cpi.values}) 
 
+Cindex = cpi_df['Index'] 
+cdate = cpi_df['Date'].values[1:]
+N = Cindex.size
+
+change = Cindex[1:].values - Cindex[:N-1].values
+changeData = Series(change, index=cdate)
+cpi_month = pd.DataFrame({'Date':changeData.index,'Index':changeData.values})
+#cpi_month is the change percentage of each month
+
 #load sp500 data
 sp = yf.Ticker('^GSPC')
 sp_df = sp.history(period='max')
